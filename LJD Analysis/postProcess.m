@@ -32,11 +32,12 @@ buildDataFile = false;
 analysis = true;
 missedDays = 0;
 savePath = fullfile(savePath, append('Experiment_',CurrentExpt,'_Cohort_',CurrentCohort,'_Binned_',binningtime));
+datesArray = startDate:endDate;
 if buildDataFile
     for i = 1:size(current_bbIDs, 2)
+        fprintf('Reading files for BB%d.\n', i)
         tempData = [];
         dirName = char(fullfile(dataPath, append('BB',current_bbIDs(i))));
-        datesArray = startDate:endDate;
         statData(i).BBID = current_bbIDs(i);
         csvBBID = char(current_bbIDs(i));
         if (str2num(csvBBID) >= 10)
@@ -66,13 +67,17 @@ if buildDataFile
     end
     save(savePath,'statData');
     fprintf('Data compilation complete! File saved to %s.\n', savePath)
-    fprintf('Missed Days: %s.', missedDays)
+    fprintf('Missed Days: %d.', missedDays)
 end
+%make row with averages??
 if analysis
     if ~exist('statData','var')
         load(savePath);
+        fprintf('Successfully loaded file %s.\n', savePath)
+        for i = 1:size(statData,2)
+            hourlyGraphHandle = HourlyGraph(statData, startDate, datesArray, i, debug);
+        end
     end
-    PlotLabjackData_BBVsDispense(statData,binningtime)
     %ranksum, etc.
 end
 end

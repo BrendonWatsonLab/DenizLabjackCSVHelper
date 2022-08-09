@@ -122,6 +122,7 @@ for i = 1:size(timeIndicies,2)
         sucPos = tempData(21);
         regPos = tempData(22);
         date = tempData(1);
+        comments = tempData(20);
         switchBool = tempData(13);
         boxID = (str2double(cell2mat(tempData(2))));
         fieldName = sprintf('b%g',boxID);
@@ -131,6 +132,7 @@ for i = 1:size(timeIndicies,2)
         boxRegH20(i) = (10 - cell2mat(regH20));
         boxSucH20(i) = (10 - cell2mat(sucH20));
         else
+        boxComments(i) = comments;
         boxWeight(i) = str2double(cell2mat(weight));   
         boxRegH20(i) = (10 - str2double(cell2mat(regH20)));
         boxSucH20(i) = (10 - str2double(cell2mat(sucH20)));
@@ -152,6 +154,7 @@ end
         GSD(j).BBName = cell2mat(BBIds(j));
         GSD(j).weight = boxWeight;
         GSD(j).dates = boxDate;
+        GSD(j).comments = boxComments;
         GSD(j).BinnedDataNoLabels = dataTable;
         GSD(j).positions = PositionTable;
         clear dataTable binnedDataNoLabels boxWeight boxregH20 box sucH20 date;

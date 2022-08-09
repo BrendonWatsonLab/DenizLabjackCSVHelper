@@ -5,8 +5,7 @@ function [hourlyData] = HourlyGraph(labjackData, startDate, datesArray, BBID, de
 %CONSUMPTION ACROSS ALL DAYS IN LAST COL
 BBIDdata = labjackData(BBID).binnedData;
 for i = 1:24 %to do: make this more efficient for god's sake. you can do better than this.
-    %there has to be an easy way to grab elements of ALL days that match a
-    %specific time without two for loops. Maybe change currDate to a range on line 27 somehow??? If there are empty spots, fill in with 0s
+    %there has to be an easy way to grab 
     if ~(i == 1)
         startDate = startDate + hours(1);
     end

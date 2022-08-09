@@ -5,8 +5,8 @@ function GSD = GatherCurrentCheckData(startDay, numDays)
 dt.Format = 'dd-MMM-yyyy';
 format short g;
 %PREFERENCES 
-checkPlacePref = false;
-MakeGraphs = true;
+checkPlacePref = true;
+MakeGraphs = false;
 analysis = true;
 usingPresetBadIdxs = true;
 %VARIABLES
@@ -198,13 +198,13 @@ if checkPlacePref
             statData(i).pos2Total =  mean(pos2All,1);
             statData(i).BBName = 'AVG';
             if MakeGraphs
-                placePrefGraph = GraphPlacePreference(statData(i), statData(i).pos1Total, statData(i).pos2Total, BadIdxs, p);
+                placePrefGraph = GraphPlacePreference(statData(i), statData(i).pos1Total, statData(i).pos2Total, WaterBadIdxs, p);
                 sucFigSavePath = fullfile(AnalysisOutputPath, 'figures');
                 savefigsasindir(sucFigSavePath,placePrefGraph,'fig');
                 savefigsasindir(sucFigSavePath,placePrefGraph,'png');
             end
         else
-            [pos1DataClean, pos2DataClean, p] = CheckPlacePreference(GSD(i), binningtime, AnalysisOutputPath, BadIdxs, 2, dispenserLUT, MakeGraphs);
+            [pos1DataClean, pos2DataClean, p] = CheckPlacePreference(GSD(i), binningtime, AnalysisOutputPath, WaterBadIdxs, 2, dispenserLUT, MakeGraphs);
             statData(i).BBName = GSD(i).BBName;
             statData(i).pos1Avg = mean(pos1DataClean);
             statData(i).pos2Avg = mean(pos2DataClean);

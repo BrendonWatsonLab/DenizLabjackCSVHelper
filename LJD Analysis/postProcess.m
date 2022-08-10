@@ -1,11 +1,11 @@
-function statData = postProcess(current_bbIDs, savePath, dataPath, CurrentExpt, CurrentCohort, binningtime, startDate, endDate)
+function labjackData = postProcess(current_bbIDs, savePath, dataPath, CurrentExpt, CurrentCohort, binningtime, startDate, endDate)
 %Collects data from Simeone's R scripts, graphs, and runs selected analyses on them
 if ~exist('current_bbIDs','var')
 	current_bbIDs = {'01' '02' '03' '04' '05' '06' '07' '08' '09' '10' '11' '12' '13' '14' '15' '16'};
     %{'01' '02' '03' '04' '05' '06' '07' '08' '09' '10' '11' '12' '13' '14' '15' '16'}
 end
 if ~exist('savepath','var')
-    savePath = 'C:\Users\kirca\Desktop\MatLab';
+    savePath = 'C:\Users\kirca_t5ih59c\Desktop\DenizLabjackCSVHelper';
 end
 if ~exist('dataPath','var')
     dataPath = 'Z:\Arduino-Exp4';
@@ -29,6 +29,7 @@ end
 %%Preferences -- USE STR2NUM!!!!! MAKE SURE THEY ARE INTS (INT16)
 debug = false;
 buildDataFile = false;
+makeGraphs = true;
 analysis = true;
 missedDays = 0;
 savePath = fullfile(savePath, append('Experiment_',CurrentExpt,'_Cohort_',CurrentCohort,'_Binned_',binningtime));
@@ -38,7 +39,7 @@ if buildDataFile
         fprintf('Reading files for BB%d.\n', i)
         tempData = [];
         dirName = char(fullfile(dataPath, append('BB',current_bbIDs(i))));
-        statData(i).BBID = current_bbIDs(i);
+        labjackData(i).BBID = current_bbIDs(i);
         csvBBID = char(current_bbIDs(i));
         if (str2num(csvBBID) >= 10)
             csvBBID = append('0', csvBBID);
@@ -63,19 +64,23 @@ if buildDataFile
                 fprintf('Could not open file %s. Continuing... \n', currCSV)
             end
         end
-        statData(i).binnedData = tempData;
+        labjackData(i).binnedData = tempData;
     end
-    save(savePath,'statData');
+    save(savePath,'labjackData');
     fprintf('Data compilation complete! File saved to %s.\n', savePath)
     fprintf('Missed Days: %d.', missedDays)
 end
 %make row with averages??
 if analysis
-    if ~exist('statData','var')
+    if ~exist('labjackData','var')
         load(savePath);
         fprintf('Successfully loaded file %s.\n', savePath)
-        for i = 1:size(statData,2)
-            HourlyData = HourlyGraph(statData, startDate, datesArray, i, debug); %to do: graph all BBIDs on same, 'average' graph
+        rebinnedData = rebin(labjackData, datesArray, 24); %to do: graph all BBIDs on same, 'average' graph
+        fprintf('Rebinning complete \n')
+        if makeGraphs
+            for i=1:size(rebinnedData,1)
+                graphRebinnedData(rebinnedData(i), 24)
+            end
         end
     end
     %ranksum, etc.

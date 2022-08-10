@@ -5,7 +5,7 @@ if ~exist('current_bbIDs','var')
     %{'01' '02' '03' '04' '05' '06' '07' '08' '09' '10' '11' '12' '13' '14' '15' '16'}
 end
 if ~exist('savepath','var')
-    savePath = 'C:\Users\kirca\Desktop\MatLab';
+    savePath = 'C:\Users\kirca_t5ih59c\Desktop\DenizLabjackCSVHelper';
 end
 if ~exist('dataPath','var')
     dataPath = 'Z:\Arduino-Exp4';
@@ -74,9 +74,7 @@ if analysis
     if ~exist('statData','var')
         load(savePath);
         fprintf('Successfully loaded file %s.\n', savePath)
-        for i = 1:size(statData,2)
-            HourlyData = HourlyGraph(statData, startDate, datesArray, i, debug); %to do: graph all BBIDs on same, 'average' graph
-        end
+        HourlyData = HourlyGraph(statData, datesArray, debug); %to do: graph all BBIDs on same, 'average' graph
     end
     %ranksum, etc.
 end

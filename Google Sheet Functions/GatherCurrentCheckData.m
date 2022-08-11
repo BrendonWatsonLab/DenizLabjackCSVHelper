@@ -6,7 +6,7 @@ dt.Format = 'dd-MMM-yyyy';
 format short g;
 %PREFERENCES 
 checkPlacePref = true;
-MakeGraphs = false;
+MakeGraphs = true;
 analysis = true;
 usingPresetBadIdxs = true;
 %VARIABLES

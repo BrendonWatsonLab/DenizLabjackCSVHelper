@@ -78,9 +78,7 @@ if analysis
         rebinnedData = rebin(labjackData, datesArray, 24); %to do: graph all BBIDs on same, 'average' graph
         fprintf('Rebinning complete \n')
         if makeGraphs
-            for i=1:size(rebinnedData,1)
-                graphRebinnedData(rebinnedData(i), 24)
-            end
+            graphRebinnedData(rebinnedData);
         end
     end
     %ranksum, etc.

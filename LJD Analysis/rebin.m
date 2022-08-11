@@ -3,37 +3,48 @@ function [finalData] = rebin(labjackData, datesArray, totalBins)
 %   Detailed explanation goes here
 %GOAL: PRODUCE A TABLE WITH 24 ROWS FOR EACH BBID, EACH ROW CONTAINING AVERAGE HOURLY
 %CONSUMPTION ACROSS ALL DAYS IN LAST COL
+fieldnames = fields(labjackData(1).binnedData);
+fieldnames(end-2:end) = [];
+fieldnames(1) = []; %just to get standard named fields
 for j = 1:size(labjackData,2)
         BBIDdata = labjackData(j).binnedData;
+        averageHolder = [];
     for i = 1:totalBins
         averages = [];
         %makes array of all dates with this hour
         datesNew = datesArray + hours(i - 1);
         %initializes hourlyVal as empty timetable
         hourlyVal = timetable(datesNew');
-        fields = fieldnames(BBIDdata);
-        for k = 2:size(fields,1) - 3 %just to get named fields
-            label = char(fields(k));
-            hourlyVal.(label) = zeros(size(datesNew,2),1);
+        for k = 1:size(fieldnames,1)
+            label = char(fieldnames(k));
+            hourlyVal.(label) = zeros(size(datesNew,2),1); 
         end
         %grabs ALL dates with data for this specific hour, replaces matching
         %rows with this data, leaving a complete timetable with 0s in missing time slots
-        hourlyVal(ismember(hourlyVal.Time, BBIDdata(ismember(BBIDdata.time, datesNew', 'rows'),:).time),:) = table2timetable(BBIDdata(ismember(BBIDdata.time, datesNew', 'rows'),:));
-        %^^ probably the most confusing line of code I have ever written in my
-        %life, need to review this in debugger to make sure I got it right
+        incompleteHourData = BBIDdata(ismember(BBIDdata.time, datesNew', 'rows'),:);
+        hourlyVal(ismember(hourlyVal.Time, incompleteHourData.time),:) = table2timetable(incompleteHourData);
         %last row of each column is averages by hour
-        for k = 2:size(fields,1) - 3 %just to get named fields
-            label = char(fields(k));
+        for k = 1:size(fieldnames,1)
+            label = char(fieldnames(k));
             average = mean(hourlyVal.(label));
-            averages = [averages; average]; %To do: save averages under proper field names
+            averages = [averages; average]; %saved in order specified in finalData.fieldnames for each BBID
         end
+        averageHolder = [averageHolder; averages'];
         fieldname = sprintf("Bin%d", i);
-        hourlyData.(fieldname) = hourlyVal;
-        hourlyData.averages = averages;
+        hourlyData(i).data = hourlyVal;
+        hourlyData(i).averages = averages;
     end
-    %fieldname = sprintf("BB%d", j);
-    finalData(j) = hourlyData;
+    if j == 1
+        finalAverages = averageHolder;
+    else
+        finalAverages = (finalAverages + averageHolder);
+    end
+    fieldname = sprintf("BB%d", j);
+    finalData.(fieldname) = hourlyData;
     %now make averages across BBIDs
 end
+    finalData.Average = (finalAverages / totalBins);
+    finalData.fieldnames = fieldnames;
+    finalData.totalBins = totalBins;
 end
 
